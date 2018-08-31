@@ -1,16 +1,19 @@
-include <Arduino.h>
+#include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <fauxmoESP.h>
 
 /* Network credentials */
-#define WIFI_SSID ""
-#define WIFI_PASS ""    
+#define WIFI_SSID "ChampagneCasa"
+#define WIFI_PASS "welcomehome"    
 
 /* Belkin WeMo emulation */
 fauxmoESP fauxmo;
+#define DEVICE_NAME "My Switch" 
 
 /* Set Relay Pins */
 #define RELAY_1 D1
+
+#define DEBUG_FAUXMO 1
 
 void setup() {
    Serial.begin(115200);
@@ -25,11 +28,7 @@ void setup() {
    digitalWrite(RELAY_1, LOW);   
 
    Serial.println("Configuring Fauxmo");
-   fauxmo.addDevice("Switch One");
-   fauxmo.addDevice("Switch Two");
-   fauxmo.addDevice("ESP");
-   fauxmo.addDevice("Living Room");
-   fauxmo.addDevice("All Devices");
+   fauxmo.addDevice(DEVICE_NAME);
    fauxmo.onMessage(callback); 
 
    Serial.println("Entering Loop");
@@ -47,7 +46,7 @@ void callback(uint8_t device_id, const char * device_name, bool state) {
   Serial.print(device_name); 
   Serial.println(" state: " + state ? "ON" : "OFF");
   
-  if(device_name == "Switch One"){ 
+  if(device_name == DEVICE_NAME){ 
       digitalWrite(RELAY_1, state ? HIGH : LOW);
   } else {
     Serial.print("Device has no functionality or not configured"); 
